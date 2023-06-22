@@ -1,0 +1,53 @@
+<%- include('partials/header') %>
+
+<div class="box">
+ <% items.forEach(function(item) { %>
+  <div class="item">
+    <form action="/crossoff" method="post">
+      <input type="hidden" name="itemId" value="<%= item.id %>" />
+      <input type="hidden" name="listName" value="<%= listTitle %>" />
+      <input type="checkbox" <%= item.checked ? 'checked' : '' %> onchange="this.form.submit()" />
+      <p <%= item.checked ? 'class="checked"' : '' %>><%= item.text %></p>
+    </form>
+  </div>
+<% }); %>
+
+  <form class="item" action="<%= listTitle === 'Work List' ? '/work' : '/' %>" method="post">
+    <input
+      type="text"
+      name="newItem"a
+      placeholder="Enter Your Item"
+      autocomplete="off"
+    />
+    <input type="hidden" name="list" value="<%= listTitle %>" />
+    <button type="submit">➕</button>
+  </form>
+</div>
+
+<script>
+  function handleCheckboxChange(itemId, listName) {
+    const data = {
+      itemId: itemId,
+      listName: listName
+    };
+
+    fetch('/checkbox-change', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+    .then(response => {
+      if (response.ok) {
+        // Reload the page to reflect the updated list
+        location.reload();
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  }
+</script>
+
+<%- include('partials/footer') %>
